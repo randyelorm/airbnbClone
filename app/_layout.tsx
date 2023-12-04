@@ -83,7 +83,6 @@ function RootLayoutNav() {
 
   const { isLoaded, isSignedIn } = useAuth()
 
-
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
       router.push('/(modals)/login')

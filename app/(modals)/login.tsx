@@ -4,9 +4,10 @@ import { useWarmUpBrowser } from '@/hooks/useWarmUpBrowser'
 import { defaultStyles } from '@/constants/Styles'
 import Colors from '@/constants/Colors'
 import { Ionicons } from '@expo/vector-icons'
-import { useOAuth } from '@clerk/clerk-expo'
+import { useOAuth, useAuth } from '@clerk/clerk-expo'
 
 import { useRouter } from 'expo-router'
+
 enum Strategy {
     Google = 'oauth_google',
     Apple = 'oauth_apple',
@@ -14,10 +15,18 @@ enum Strategy {
 }
 
 
+
 const Page = () => {
 
+
+
+    // usewarmUpBrowser allows the login page to load very fast in android.
     useWarmUpBrowser()
     const router = useRouter()
+
+
+
+
     const { startOAuthFlow: googleAuth } = useOAuth({ strategy: 'oauth_google' })
     const { startOAuthFlow: appleAuth } = useOAuth({ strategy: 'oauth_apple' })
     const { startOAuthFlow: facebookAuth } = useOAuth({ strategy: 'oauth_facebook' })
@@ -39,6 +48,9 @@ const Page = () => {
 
         catch (err) { console.error(err) }
     }
+
+
+
 
     return (
 
