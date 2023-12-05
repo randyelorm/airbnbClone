@@ -3,6 +3,7 @@ import React, { useRef, useState } from 'react'
 import { Link } from 'expo-router'
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import Colors from '@/constants/Colors';
+import * as Haptics from 'expo-haptics'
 
 
 
@@ -37,11 +38,34 @@ const categories = [
     },
 ];
 
-const ExploreHeader = () => {
+
+
+interface Props {
+    onCategoryChanged: (category: string) => void
+}
+
+const ExploreHeader = ({ onCategoryChanged }: Props) => {
+
+    const scrollRef = useRef<ScrollView>(null)
 
     const itemsRef = useRef<Array<TouchableOpacity | null>>([])
     const [activeIndex, setActiveIndex] = useState(0)
 
+    const selectCategory = (index: number) => {
+        const selected = itemsRef.current[index]
+        setActiveIndex(index)
+
+
+        selected?.measure((x) => {
+            scrollRef.current?.scrollTo({ x: x - 16, y: 0, animated: true })
+
+        })
+
+
+
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+        onCategoryChanged(categories[index].name)
+    }
 
 
     return (
@@ -70,18 +94,32 @@ const ExploreHeader = () => {
                         paddingHorizontal: 16
                     }}
 
+                    ref={scrollRef}
+
                 >
                     {categories.map((item, index) => (
-                        <TouchableOpacity key={index} ref={(el) => itemsRef.current[index] = el}>
-                            <MaterialIcons name={item.icon as any} size={24} />
-                            <Text>{item.name}</Text>
+                        <TouchableOpacity
+                            key={index} ref={(el) => itemsRef.current[index] = el}
+                            style={activeIndex === index ? styles.categoriesBtnActive : styles.categoriesBtn}
+                            onPress={() => (selectCategory(index))}
+
+                        >
+                            <MaterialIcons
+                                name={item.icon as any}
+                                size={24}
+                                color={activeIndex === index ? 'black' : Colors.grey}
+
+                            />
+                            <Text style={activeIndex === index ? styles.categoryTextActive : styles.categoryText}>{
+                                item.name}
+                            </Text>
                         </TouchableOpacity>
 
 
                     ))}
                 </ScrollView>
             </View>
-        </SafeAreaView>
+        </SafeAreaView >
     )
 }
 
